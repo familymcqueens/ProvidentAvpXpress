@@ -7,7 +7,15 @@ use Test::More "no_plan";
 use Test::Exception;
 use Tk;
 
-$AVP_WEBSITE = "http://new.assuredvehicleprotection.com/Login.aspx";
+# This script is known to work with C:\Selenium>java -jar selenium-server-standalone-2.50.1.jar
+# and Firefox version 47.0.2
+# Firefox has Adds-On for Debugging Help: 
+# - Selenium IDE
+# - Selenium IDE Button
+# - Selenium IDE: Perl Formatter
+# Date: 2/3/2017
+
+$AVP_WEBSITE = "http://new.assuredvehicleprotection.com/";
 
 $SLOW_SPEED = 250;
 $DUPLICATE_ENTRY = "DUPLICATE ENTRY";
@@ -24,13 +32,13 @@ my $filename = sprintf(">%s",$avpHtmlFilename);
 
 if (open(HTML_OUTPUT_FILE,$filename) == 0) {
    print "Error opening: %s",$filename,"\n";
-   exit -1;  
+   exit;  
 }
 
 print HTML_OUTPUT_FILE  "<html>\n";
 print HTML_OUTPUT_FILE  "<head><title>Provident Financial AVP eXpress</title></head>\n";
 print HTML_OUTPUT_FILE  "<body>\n";
-print HTML_OUTPUT_FILE "<div style=\"display:block;text-align:left\"><a href=\"http://new.assuredvehicleprotection.com/Login.aspx\" imageanchor=1><img align=\"left\" src=\"avp.jpg\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1>";
+print HTML_OUTPUT_FILE "<div style=\"display:block;text-align:left\"><a href=\"http://new.assuredvehicleprotection.com\" imageanchor=1><img align=\"left\" src=\"avp.jpg\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1>";
 print HTML_OUTPUT_FILE "<head><style>\n";
 print HTML_OUTPUT_FILE "table  { width:80%;}\n";
 print HTML_OUTPUT_FILE "th, td { padding: 10px;}\n";
@@ -44,8 +52,8 @@ print HTML_OUTPUT_FILE  "<tr><th>Index</th><th>Product</th><th>Sale Date</th><th
 my $answer;
 my $sel = Test::WWW::Selenium->new( host => "localhost", 
                                     port => 4444, 
-                                    browser => "*chrome", 
-                                    browser_url => "http://new.assuredvehicleprotection.com/Login.aspx");
+                                    browser => "*firefox", 
+                                    browser_url => "http://new.assuredvehicleprotection.com");
 
 $sel->open_ok($AVP_WEBSITE);
 $sel->click_ok("id=errorTryAgain");
@@ -62,10 +70,10 @@ $sel->type_ok("id=txtUserName", "tbaer");
 $sel->type_ok("id=txtPassword", "tbaer");
 $sel->click_ok("id=btnLogin");
 $sel->wait_for_page_to_load_ok("30000");
-$sel->click_ok("css=#item_contracts > li.miOpen > span.miOpen");
+#$sel->click_ok("css=#item_contracts > li.miOpen > span.miOpen");
 $sel->select_frame_ok("frmContent");
-$sel->wait_for_page_to_load("30000");
-$sel->click_ok("css=li > span");
+$sel->click_ok("id=newContract");
+#$sel->click_ok("css=li > span");
 $sel->wait_for_page_to_load_ok("30000");
 
 my $vin;
