@@ -14,14 +14,13 @@ my %data;
 print $q->header;
 
 my $myTodayFormat = localtime->strftime('%Y_%m_%d');
-my $avpOutputFilename = sprintf("%s\\ProvidentAvp_output.csv",$myTodayFormat);
-my $csv_output_filename = sprintf("c:\\Wwebserver\\ProvidentAvpExpress\\%s",$avpOutputFilename);
+my $csv_output_filename = sprintf("c:\\Wwebserver\\ProvidentAvpExpress\\%s\\ProvidentAvp_output.csv",$myTodayFormat);
 
 
 print   "<html>\n";
 print   "<title>Provident Financial AVP eXpress</title>\n";
 print   "<body>\n";
-print   "<div style=\"display:block;text-align:left\"><a href=\"http://new.assuredvehicleprotection.com/Login.aspx\" imageanchor=1><img align=\"left\" src=\"avp.jpg\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1>";
+print   "<div style=\"display:block;text-align:left\"><a href=\"http://new.assuredvehicleprotection.com\" imageanchor=1><img align=\"left\" src=\"ProvidentAvp.png\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1>";
 print   "<head><style>\n";
 print   "table  { width:80%;}\n";
 print   "th, td { padding: 10px;}\n";
@@ -42,9 +41,9 @@ print   "<tr><th>Index</th><th>Product</th><th>VIN</th><th>Mileage</th><th>Custo
 
 print   "<form method=\"GET\" action=\"http://localhost/ProvidentAvpExpress/ProvidentAvp3.pl\">\n";
 
-
-if (open(CSV_OUTPUT_FILE,'>',$csv_output_filename) == 0) {
-   print "\nError opening: ProvidentAvp_output.csv\n";
+my $filename = sprintf(">%s",$csv_output_filename);
+if (open(CSV_OUTPUT_FILE,$filename) == 0) {
+   print "Error opening: %s",$filename,"\n";
    exit -1;  
 }
 
