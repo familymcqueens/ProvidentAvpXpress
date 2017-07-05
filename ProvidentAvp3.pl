@@ -165,7 +165,7 @@ while (<AM_INPUT_FILE>)
 			print  HTML_OUTPUT_FILE "</tr>\n";
 			$sel->click_ok("link=Contracts");
 			$sel->wait_for_page_to_load_ok("30000");
-			#$sel->select_frame_ok("frmContent");
+			$sel->select_frame_ok("frmContent");
 			$sel->click_ok("css=li > span");
 			$sel->wait_for_page_to_load_ok("30000");
 			next;

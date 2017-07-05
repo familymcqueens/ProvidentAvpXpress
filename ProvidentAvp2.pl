@@ -1,9 +1,6 @@
 #!/usr/bin/perl -w
 use Time::Piece;
 use Locale::Currency::Format;
-use strict;
-use warnings;
-use 5.008;
  
 use Data::Dumper;
 use CGI;
@@ -14,7 +11,9 @@ my %data;
 print $q->header;
 
 my $myTodayFormat = localtime->strftime('%Y_%m_%d');
-my $csv_output_filename = sprintf("c:\\Wwebserver\\ProvidentAvpExpress\\%s\\ProvidentAvp_output.csv",$myTodayFormat);
+
+# ***  CHANGE THIS IF LOCATION OF PROVIDENT AVP EXPRESS DIRECTORY CHANGES ***
+my $csv_output_filename = sprintf("c:\\jmcqueen\\Wwebserver\\ProvidentAvpExpress\\%s\\ProvidentAvp_output.csv",$myTodayFormat);
 
 
 print   "<html>\n";
