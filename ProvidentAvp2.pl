@@ -10,14 +10,20 @@ my $q = CGI->new;
 my %data;
 print $q->header;
 
+# GAP or Warranty
+$data{cust_product} = $q->param("cust_product");
+my $product  = $data{cust_product};
+
+
 my $myTodayFormat = localtime->strftime('%Y_%m_%d');
 
-# ***  CHANGE THIS IF LOCATION OF PROVIDENT AVP EXPRESS DIRECTORY CHANGES ***
-my $csv_output_filename = sprintf("c:\\jmcqueen\\Wwebserver\\ProvidentAvpExpress\\%s\\ProvidentAvp_output.csv",$myTodayFormat);
-
+# ***************************************************************************
+# *** CHANGE THIS IF LOCATION OF PROVIDENT AVP EXPRESS DIRECTORY CHANGES  ***
+# ***************************************************************************
+my $csv_output_filename = sprintf("c:\\jmcqueen\\Provident\\Wwebserver\\ProvidentAvpExpress\\%s\\ProvidentAvp_output.csv",$myTodayFormat);
 
 print   "<html>\n";
-print   "<title>Provident Financial AVP eXpress</title>\n";
+print   "<title>AVP eXpress</title>\n";
 print   "<body>\n";
 print   "<div style=\"display:block;text-align:left\"><a href=\"http://new.assuredvehicleprotection.com\" imageanchor=1><img align=\"left\" src=\"ProvidentAvp.png\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1>";
 print   "<head><style>\n";
@@ -59,9 +65,6 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 	{
 		$num_accounts_checked++;
 		
-		my $cust_product = sprintf("cust_%d_product", $i);	
-	    $data{cust_product} = $q->param($cust_product);
-		
 		my $cust_vin = sprintf("cust_%d_vin", $i);
 	    $data{cust_vin} = $q->param($cust_vin);
 		
@@ -98,7 +101,6 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 		my $cust_vehicle = sprintf("cust_%d_vehicle", $i);	
 	    $data{cust_vehicle} = $q->param($cust_vehicle);
 
-		my $product  = $data{cust_product};
 		my $vin = $data{cust_vin};
 		my $mileage = $data{cust_mileage};	
 		my $firstname = sprintf("%s",ucfirst(lc($data{cust_firstname})));
@@ -125,16 +127,9 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 		print   "<td align=\"center\">",$formatted_price,"</td>\n";
 		print   "<td align=\"left\">",$vehicle,"</td>\n";
 		print   "</tr>\n";
-
-		if ($product eq "both")
-		{
-			print CSV_OUTPUT_FILE "warranty",",",$vin,",",$mileage,",",$firstname,",",$lastname,",",$saledate,",",$address,",",$city,",",$state,",",$zip,",",$phone,",",$price,"\n";
-			print CSV_OUTPUT_FILE "gap",",",$vin,",",$mileage,",",$firstname,",",$lastname,",",$saledate,",",$address,",",$city,",",$state,",",$zip,",",$phone,",",$price,"\n";
-		}
-		else
-		{
-			print CSV_OUTPUT_FILE $product,",",$vin,",",$mileage,",",$firstname,",",$lastname,",",$saledate,",",$address,",",$city,",",$state,",",$zip,",",$phone,",",$price,"\n";
-		}
+		
+		print CSV_OUTPUT_FILE $product,",",$vin,",",$mileage,",",$firstname,",",$lastname,",",$saledate,",",$address,",",$city,",",$state,",",$zip,",",$phone,",",$price,"\n";
+		
 	}
 }
 

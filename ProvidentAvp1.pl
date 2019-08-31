@@ -7,16 +7,19 @@ use 5.010;
 use Time::Piece;
 use IO::Handle;
 use Locale::Currency::Format;
+
+
  
 # Works with Firefox version 43
+# https://ftp.mozilla.org/pub/firefox/releases/43.0/win32/en-US/
   
 # ProvidentAvp1.pl 
 # Input file: ARGV[0] = Sales Report in .CSV format
 # Output file: ProvidentAvpFile.html - the selection of products for each customer
 #
 
-if (open(AM_INPUT_FILE,$ARGV[0]) == 0) {
-   print "Error opening input AutoManager report file: ",$ARGV[0],"\n";
+if (open(AM_INPUT_FILE,"AVPSALESREPORT.CSV") == 0) {
+   print "Error opening input AutoManager report file\n";
    exit -1;  
 }
 
@@ -41,13 +44,15 @@ my $saledate;
 my $homephone;
 my $cellphone;
 my $vehicle;
+my $state;
+my $price;
 
 print HTML_OUTPUT_FILE  "<html>\n";
 print HTML_OUTPUT_FILE  "<body>\n";
-print HTML_OUTPUT_FILE  "<title>Provident Financial AVP eXpress</title>\n";
+print HTML_OUTPUT_FILE  "<title>AVP eXpress</title>\n";
 print HTML_OUTPUT_FILE  "<div style=\"display:block;text-align:left\">\n";
 print HTML_OUTPUT_FILE  "<a href=\"http://new.assuredvehicleprotection.com/Login.aspx\" imageanchor=1>\n";
-print HTML_OUTPUT_FILE  "<img align=\"left\" src=\"ProvidentAvp.png\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1><br>\n";
+print HTML_OUTPUT_FILE  "<img align=\"left\" src=\"ProvidentAvp.png\" border=0></a><h1><I>AVP eXpress</I></h1><br>\n";
 print HTML_OUTPUT_FILE  "<form method=\"GET\" action=\"http://localhost/ProvidentAvpExpress/ProvidentAvp2.pl\">\n";
 
 print HTML_OUTPUT_FILE  "<head><style>\n";
@@ -65,22 +70,28 @@ print HTML_OUTPUT_FILE "TH{font-family: Arial; font-size: 10pt;}\n";
 print HTML_OUTPUT_FILE "--->\n";
 print HTML_OUTPUT_FILE "</style>\n";
 
+print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\"><input type=\"radio\" name=\"cust_product\" value=\"Warranty\" checked>Warranty</td>   "; 
+print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\"><input type=\"radio\" name=\"cust_product\" value=\"GAP\">GAP</td><br>\n"; 
+print HTML_OUTPUT_FILE  "<br><br>";	
+
 
 print HTML_OUTPUT_FILE  "<table border=5 id=\"table01\" >\n";
-print HTML_OUTPUT_FILE  "<tr><th>Select</th><th>Warranty</th><th>GAP</th><th>Both</th><th>Sales Date</th><th>VIN</th><th>Mileage</th><th>Name</th><th>Sales Price</th><th>Vehicle</th></tr>\n";
+print HTML_OUTPUT_FILE  "<tr><th>Select</th><th>Sales Date</th><th>VIN</th><th>Mileage</th><th>Name</th><th>Sales Price</th><th>Vehicle</th></tr>\n";
 
 my $loopIteration = 0;
 
 while (<AM_INPUT_FILE>) 
 {
 	chomp;
-	my ($vin,$mileage,$firstname,$lastname,$address,$city,$state,$zip,$saledate,$homephone,$cellphone,$price,$vehicle) = split(",");
+	($vin,$mileage,$firstname,$lastname,$address,$city,$state,$zip,$saledate,$homephone,$cellphone,$price,$vehicle) = split(",");
 	
-	if ($vin eq "VIN Number")
+	print $loopIteration, " ", $vin, "\n";
+	
+	
+	if (length($vin) ne 17)
 	{
-		next;
+		last;
 	}
-	
 	
 	$firstname =~ s/^ *//;
 	$firstname = sprintf("%s",ucfirst(lc($firstname)));
@@ -100,9 +111,6 @@ while (<AM_INPUT_FILE>)
 	
 	print HTML_OUTPUT_FILE  "<tr>\n";	
 	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\"><input type=\"checkbox\" name=\"cust_",$loopIteration,"_cb\" value=\"yes\" checked></td>\n"; 
-	print HTML_OUTPUT_FILE  "<td width=\"6%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_product\" value=\"warranty\" ></td>\n";
-	print HTML_OUTPUT_FILE  "<td width=\"6%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_product\" value=\"gap\"checked></td>\n";
-	print HTML_OUTPUT_FILE  "<td width=\"6%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_product\" value=\"both\"></td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"center\">",$saledate,"</td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"center\">",$vin,"</td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"left\">",$formatted_mileage,"</td>\n";	

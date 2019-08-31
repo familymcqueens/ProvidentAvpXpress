@@ -20,18 +20,45 @@ $AVP_WEBSITE = "http://new.assuredvehicleprotection.com/";
 $SLOW_SPEED = 250;
 $DUPLICATE_ENTRY = "DUPLICATE ENTRY";
 $MANUAL_ENTRY = "MANUAL ENTRY REQUIRED";
+$PROVIDENT = "Provident";
+$PROFIN = "ProFin";
 
 if (open(AM_INPUT_FILE,$ARGV[0]) == 0) {
    print "Error opening input AutoManager report file: ",$ARGV[0],"\n";
    exit;  
 }
 
+my $myCompany = $ARGV[1];
+
+if (length($myCompany) eq 0)
+{
+	print "Error input company missing: ",$ARGV[1],"\n";
+	exit;
+}
+
+if ( $myCompany eq $PROVIDENT )
+{
+	$myLogin = "jmcqueen";
+}
+elsif ($myCompany eq $PROFIN)
+{
+	$myLogin = "jmcqueenJTR";	
+}
+else 
+{
+	print "Error - no company name match: ", $myCompany, "\n";
+	exit;
+}
+
+print "Company: ", $myCompany,"\n";
+
+
 my $myTodayFormat = localtime->strftime('%Y_%m_%d');
 my $avpHtmlFilename = sprintf("%s\\ProvidentAvpFinal.html",$myTodayFormat);
 my $filename = sprintf(">%s",$avpHtmlFilename);
 
 if (open(HTML_OUTPUT_FILE,$filename) == 0) {
-   print "Error opening: %s",$filename,"\n";
+   print "Error opening html: %s",$filename,"\n";
    exit;  
 }
 
@@ -57,7 +84,7 @@ my $sel = Test::WWW::Selenium->new( host => "localhost",
 
 $sel->open_ok($AVP_WEBSITE);
 $sel->click_ok("id=errorTryAgain");
-$sel->window_maximize();
+#$sel->window_maximize();
 
 while ( $sel->is_element_present("id=txtUserName") eq 0 )
 {
@@ -66,8 +93,8 @@ while ( $sel->is_element_present("id=txtUserName") eq 0 )
 	sleep(2);
 }
 
-$sel->type_ok("id=txtUserName", "tbaer");
-$sel->type_ok("id=txtPassword", "tbaer");
+$sel->type_ok("id=txtUserName", $myLogin);
+$sel->type_ok("id=txtPassword", $myLogin);
 $sel->click_ok("id=btnLogin");
 $sel->wait_for_page_to_load_ok("30000");
 #$sel->click_ok("css=#item_contracts > li.miOpen > span.miOpen");
@@ -113,7 +140,7 @@ while (<AM_INPUT_FILE>)
 	##
 	## WARRANTY
 	##
-	if (($product eq "warranty"))
+	if ((uc($product) eq "WARRANTY"))
 	{
 		print  HTML_OUTPUT_FILE "<tr>\n";
 		print  HTML_OUTPUT_FILE "<td align=\"center\">",$loopIteration,"</td>\n";
@@ -124,8 +151,20 @@ while (<AM_INPUT_FILE>)
 		print  HTML_OUTPUT_FILE "<td align=\"center\">",uc($firstname)," ",uc($lastname),"</td>\n";
 		
 		print "WARRANTY: Clicking on warranty control..\n";
-		##$sel->click_ok("id=GridView1_ctl02_lnkDealerID");
-		$sel->click_ok("id=GridView1_lnkDealerID_0");
+		###$sel->click_ok("id=GridView1_ctl02_lnkDealerID");
+		
+		# The Provident Login still have both companies.. need to use (2-warranty), but (0) for ProFin login
+		if ($myCompany eq $PROFIN )
+		{
+			$sel->click_ok("id=GridView1_lnkDealerID_0");
+			print "PROFIN WARRANTY\n";
+		}
+		else
+		{
+			$sel->click_ok("id=GridView1_lnkDealerID_0");
+			print "PROVIDENT WARRANTY\n";
+		}
+		
 		$sel->wait_for_page_to_load_ok("30000");
 
 		$sel->set_speed($SLOW_SPEED);
@@ -185,7 +224,7 @@ while (<AM_INPUT_FILE>)
 	##
 	## GAP
 	##
-	if (($product eq "gap"))	
+	if ((uc($product) eq "GAP"))	
 	{
 		print  HTML_OUTPUT_FILE "<tr>\n";
 		print  HTML_OUTPUT_FILE "<td align=\"center\">",$loopIteration,"</td>\n";		
@@ -197,7 +236,19 @@ while (<AM_INPUT_FILE>)
 		
 		print "GAP: Clicking on warranty control..\n";
 		##$sel->click_ok("id=GridView1_ctl03_lnkDealerID");
-		$sel->click_ok("id=GridView1_lnkDealerID_1");
+		
+		# The Provident Login still have both companies.. need to use (3), but (1) for ProFin login
+		if ($myCompany eq $PROFIN )
+		{
+			$sel->click_ok("id=GridView1_lnkDealerID_1");
+			print "PROFIN GAP\n";
+		}
+		else
+		{
+			$sel->click_ok("id=GridView1_lnkDealerID_1");
+			print "PROVIDENT GAP\n";			
+		}
+		
 		$sel->wait_for_page_to_load_ok("30000");
 		##$sel->type_ok("id=ctl00_ContentPlaceHolder1_txtVIN", $vin);
 		##$sel->type_ok("id=ctl00_ContentPlaceHolder1_txtMileage", $mileage);
@@ -244,7 +295,7 @@ while (<AM_INPUT_FILE>)
 		## Try to see if there is only one GAP offered
 		$sel->click_ok("name=OptContractRate");
 		## However, if there is 2, select the second one
-		$sel->click_ok("xpath=(//input[\@name='OptContractRate'])[2]");		
+		$sel->click_ok("xpath=(//input[\@name='OptContractRate'])[1]");		
 		$sel->click_ok("id=lnkNext");
 		$sel->wait_for_page_to_load_ok("30000");
 		EnterProductInformation();
