@@ -18,8 +18,8 @@ use Locale::Currency::Format;
 # Output file: ProvidentAvpFile.html - the selection of products for each customer
 #
 
-if (open(AM_INPUT_FILE,"AVPSALESREPORT.CSV") == 0) {
-   print "Error opening input AutoManager report file\n";
+if (open(AM_INPUT_FILE,$ARGV[0]) == 0) {
+   print "Error opening input AutoManager report file: ",$ARGV[0],"\n";
    exit -1;  
 }
 
@@ -76,7 +76,7 @@ print HTML_OUTPUT_FILE  "<br><br>";
 
 
 print HTML_OUTPUT_FILE  "<table border=5 id=\"table01\" >\n";
-print HTML_OUTPUT_FILE  "<tr><th>Select</th><th>Sales Date</th><th>VIN</th><th>Mileage</th><th>Name</th><th>Sales Price</th><th>Vehicle</th></tr>\n";
+print HTML_OUTPUT_FILE  "<tr><th>Select</th><th>12 mo</th><th>24 mo</th><th>36 mo</th><th>48 mo</th><th>Sales Date</th><th>VIN</th><th>Mileage</th><th>Name</th><th>Sales Price</th><th>Vehicle</th></tr>\n";
 
 my $loopIteration = 0;
 
@@ -110,7 +110,13 @@ while (<AM_INPUT_FILE>)
 	$formatted_mileage =~ s/(?<=\d)(?=(?:\d\d\d)+\b)/,/g;	
 	
 	print HTML_OUTPUT_FILE  "<tr>\n";	
+	
 	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\"><input type=\"checkbox\" name=\"cust_",$loopIteration,"_cb\" value=\"yes\" checked></td>\n"; 
+	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_gap_product\" value=\"12\"checked></td>\n";
+	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_gap_product\" value=\"24\"></td>\n";
+	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_gap_product\" value=\"36\"></td>\n";
+	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_gap_product\" value=\"48\"></td>\n";
+	
 	print HTML_OUTPUT_FILE  "<td align=\"center\">",$saledate,"</td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"center\">",$vin,"</td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"left\">",$formatted_mileage,"</td>\n";	
@@ -118,6 +124,8 @@ while (<AM_INPUT_FILE>)
 	print HTML_OUTPUT_FILE  "<td align=\"center\">",$formatted_price,"</td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"left\">",$vehicle,"</td>\n";
 	print HTML_OUTPUT_FILE  "</tr>\n";
+	
+	
 	
 	print HTML_OUTPUT_FILE  "<input type=\"hidden\" name=\"cust_",$loopIteration,"_vin\" value=\"",$vin,"\">\n";
 	print HTML_OUTPUT_FILE  "<input type=\"hidden\" name=\"cust_",$loopIteration,"_mileage\" value=\"",$mileage,"\">\n";

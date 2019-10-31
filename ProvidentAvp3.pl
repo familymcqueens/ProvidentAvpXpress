@@ -118,7 +118,7 @@ my $loopIteration = 0;
 while (<AM_INPUT_FILE>) 
 {
 	chomp;
-	($product,$vin,$mileage,$firstname,$lastname,$saledate,$address,$city,$state,$zip,$phone,$price) = split(",");
+	($product,$gap_product,$vin,$mileage,$firstname,$lastname,$saledate,$address,$city,$state,$zip,$phone,$price) = split(",");
 	
 	$loopIteration++;
 	
@@ -134,9 +134,8 @@ while (<AM_INPUT_FILE>)
 		$saledate = sprintf("%s/%s/20%s/",$sd_month,$sd_day,$sd_year);
 	}
 	
-	print "PRODUCT: ",$product, " VIN: ",$vin," MILEAGE: ",$mileage," LASTNAME:",$lastname, " SALEDATE: ",$saledate,"\n";
+	print "PRODUCT: ",$product, "GAP PRODUCT: ",$gap_product," VIN: ",$vin," MILEAGE: ",$mileage," LASTNAME:",$lastname, " SALEDATE: ",$saledate,"\n";
 	
-		
 	##
 	## WARRANTY
 	##
@@ -237,18 +236,8 @@ while (<AM_INPUT_FILE>)
 		print "GAP: Clicking on warranty control..\n";
 		##$sel->click_ok("id=GridView1_ctl03_lnkDealerID");
 		
-		# The Provident Login still have both companies.. need to use (3), but (1) for ProFin login
-		if ($myCompany eq $PROFIN )
-		{
-			$sel->click_ok("id=GridView1_lnkDealerID_1");
-			print "PROFIN GAP\n";
-		}
-		else
-		{
-			$sel->click_ok("id=GridView1_lnkDealerID_1");
-			print "PROVIDENT GAP\n";			
-		}
-		
+		$sel->click_ok("id=GridView1_lnkDealerID_1");
+				
 		$sel->wait_for_page_to_load_ok("30000");
 		##$sel->type_ok("id=ctl00_ContentPlaceHolder1_txtVIN", $vin);
 		##$sel->type_ok("id=ctl00_ContentPlaceHolder1_txtMileage", $mileage);
@@ -291,11 +280,34 @@ while (<AM_INPUT_FILE>)
 		}
 		
 		print uc($product),"- Entering customer information.\n";		
-		##$sel->click_ok("document.form1.OptContractRate[1]");
+		
+		if ($gap_product eq 48)
+		{
+			$sel->click_ok("xpath=(//input[\@name='OptContractRate'])[4]");		
+		}
+		
+		if ($gap_product eq 36)
+		{
+			$sel->click_ok("xpath=(//input[\@name='OptContractRate'])[3]");		
+		}
+		
+		if ($gap_product eq 24)
+		{
+			$sel->click_ok("xpath=(//input[\@name='OptContractRate'])[2]");		
+		}
+		
+		if ($gap_product eq 12)
+		{
+			$sel->click_ok("xpath=(//input[\@name='OptContractRate'])[1]");		
+		}
+		
 		## Try to see if there is only one GAP offered
-		$sel->click_ok("name=OptContractRate");
+		#TEMP $sel->click_ok("name=OptContractRate");
+		
 		## However, if there is 2, select the second one
-		$sel->click_ok("xpath=(//input[\@name='OptContractRate'])[1]");		
+		#TEMP $sel->click_ok("xpath=(//input[\@name='OptContractRate'])[1]");		
+		
+		
 		$sel->click_ok("id=lnkNext");
 		$sel->wait_for_page_to_load_ok("30000");
 		EnterProductInformation();

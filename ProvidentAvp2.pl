@@ -65,6 +65,9 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 	{
 		$num_accounts_checked++;
 		
+		my $cust_gap_product = sprintf("cust_%d_gap_product", $i);
+	    $data{cust_gap_product} = $q->param($cust_gap_product);
+		
 		my $cust_vin = sprintf("cust_%d_vin", $i);
 	    $data{cust_vin} = $q->param($cust_vin);
 		
@@ -101,6 +104,7 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 		my $cust_vehicle = sprintf("cust_%d_vehicle", $i);	
 	    $data{cust_vehicle} = $q->param($cust_vehicle);
 
+		my $gap_product = $data{cust_gap_product};
 		my $vin = $data{cust_vin};
 		my $mileage = $data{cust_mileage};	
 		my $firstname = sprintf("%s",ucfirst(lc($data{cust_firstname})));
@@ -128,7 +132,7 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 		print   "<td align=\"left\">",$vehicle,"</td>\n";
 		print   "</tr>\n";
 		
-		print CSV_OUTPUT_FILE $product,",",$vin,",",$mileage,",",$firstname,",",$lastname,",",$saledate,",",$address,",",$city,",",$state,",",$zip,",",$phone,",",$price,"\n";
+		print CSV_OUTPUT_FILE $product,",",$gap_product,",",$vin,",",$mileage,",",$firstname,",",$lastname,",",$saledate,",",$address,",",$city,",",$state,",",$zip,",",$phone,",",$price,"\n";
 		
 	}
 }
