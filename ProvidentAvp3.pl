@@ -15,7 +15,7 @@ use Tk;
 # - Selenium IDE: Perl Formatter
 # Date: 2/3/2017
 
-$AVP_WEBSITE = "http://new.assuredvehicleprotection.com/";
+$AVP_WEBSITE = "https://login.assuredvehicleprotection.com/Login.aspx";
 
 $SLOW_SPEED = 250;
 $DUPLICATE_ENTRY = "DUPLICATE ENTRY";
@@ -65,7 +65,7 @@ if (open(HTML_OUTPUT_FILE,$filename) == 0) {
 print HTML_OUTPUT_FILE  "<html>\n";
 print HTML_OUTPUT_FILE  "<head><title>Provident Financial AVP eXpress</title></head>\n";
 print HTML_OUTPUT_FILE  "<body>\n";
-print HTML_OUTPUT_FILE "<div style=\"display:block;text-align:left\"><a href=\"http://new.assuredvehicleprotection.com\" imageanchor=1><img align=\"left\" src=\"avp.jpg\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1>";
+print HTML_OUTPUT_FILE "<div style=\"display:block;text-align:left\"><a href=\"https://login.assuredvehicleprotection.com/Login.aspx\" imageanchor=1><img align=\"left\" src=\"avp.jpg\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1>";
 print HTML_OUTPUT_FILE "<head><style>\n";
 print HTML_OUTPUT_FILE "table  { width:80%;}\n";
 print HTML_OUTPUT_FILE "th, td { padding: 10px;}\n";
@@ -80,7 +80,7 @@ my $answer;
 my $sel = Test::WWW::Selenium->new( host => "localhost", 
                                     port => 4444, 
                                     browser => "*firefox", 
-                                    browser_url => "http://new.assuredvehicleprotection.com");
+                                    browser_url => "https://login.assuredvehicleprotection.com/Login.aspx");
 
 $sel->open_ok($AVP_WEBSITE);
 $sel->click_ok("id=errorTryAgain");
@@ -92,6 +92,11 @@ while ( $sel->is_element_present("id=txtUserName") eq 0 )
 	$sel->open($AVP_WEBSITE);
 	sleep(2);
 }
+
+# New cookie consent button added to site - 4/2/20
+$sel->click_ok("id=btnCookieConsent", $myLogin);
+sleep(1);
+
 
 $sel->type_ok("id=txtUserName", $myLogin);
 $sel->type_ok("id=txtPassword", $myLogin);
@@ -644,7 +649,7 @@ sub LookUpStateFromAbbreviation
 	}
 	elsif ($abbev eq "VA")
 	{
-		return "Virgina";
+		return "Virginia";
 	}
 	elsif ($abbev eq "WA")
 	{
@@ -652,7 +657,7 @@ sub LookUpStateFromAbbreviation
 	}
 	elsif ($abbev eq "WV")
 	{
-		return "West Virgina";
+		return "West Virginia";
 	}
 	elsif ($abbev eq "WI")
 	{
@@ -664,7 +669,7 @@ sub LookUpStateFromAbbreviation
 	}
 	else
 	{
-		return 0;
+		return "Error";
 	}
 	
 }
