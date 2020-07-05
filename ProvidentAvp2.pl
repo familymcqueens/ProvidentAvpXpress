@@ -14,7 +14,6 @@ print $q->header;
 $data{cust_product} = $q->param("cust_product");
 my $product  = $data{cust_product};
 
-
 my $myTodayFormat = localtime->strftime('%Y_%m_%d');
 
 # ***************************************************************************
@@ -25,7 +24,7 @@ my $csv_output_filename = sprintf("c:\\jmcqueen\\Provident\\Wwebserver\\Providen
 print   "<html>\n";
 print   "<title>AVP eXpress</title>\n";
 print   "<body>\n";
-print   "<div style=\"display:block;text-align:left\"><a href=\"http://new.assuredvehicleprotection.com\" imageanchor=1><img align=\"left\" src=\"ProvidentAvp.png\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1>";
+print   "<div style=\"display:block;text-align:left\"><a href=\"http://new.assuredvehicleprotection.com\" imageanchor=1><img align=\"left\" src=\"ProvidentAvp.png\" border=0></a><h1><I>Pro Fin AVP eXpress</I></h1>";
 print   "<head><style>\n";
 print   "table  { width:80%;}\n";
 print   "th, td { padding: 10px;}\n";
@@ -42,7 +41,7 @@ print  "--->\n";
 print  "</style>\n";
 
 print   "<table border=5 id=\"table01\" >\n";
-print   "<tr><th>Index</th><th>Product</th><th>VIN</th><th>Mileage</th><th>Customer Name</th><th>Sales Date</th><th>Price</th><th>Vehicle</th></tr>\n";
+print   "<tr><th>Index</th><th>Product</th><th>Months</th><th>Mileage</th><th>Deductible</th><th>High Mileage</th><th>VIN</th><th>Odometer</th><th>Customer Name</th><th>Sales Date</th><th>Price</th><th>Vehicle</th></tr>\n";
 
 print   "<form method=\"GET\" action=\"http://localhost/ProvidentAvpExpress/ProvidentAvp3.pl\">\n";
 
@@ -65,8 +64,17 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 	{
 		$num_accounts_checked++;
 		
-		my $cust_gap_product = sprintf("cust_%d_gap_product", $i);
-	    $data{cust_gap_product} = $q->param($cust_gap_product);
+		my $cust_product_months = sprintf("cust_%d_product_months", $i);
+	    $data{cust_product_months} = $q->param($cust_product_months);
+		
+		my $cust_warranty_mileage = sprintf("cust_%d_product_mileage", $i);
+	    $data{cust_warranty_mileage} = $q->param($cust_warranty_mileage);
+		
+		my $cust_warranty_deductible = sprintf("cust_%d_product_deductible", $i);
+	    $data{cust_warranty_deductible} = $q->param($cust_warranty_deductible);
+		
+		my $cust_high_mileage = sprintf("cust_%d_high_mileage", $i);
+	    $data{cust_high_mileage} = $q->param($cust_high_mileage);
 		
 		my $cust_vin = sprintf("cust_%d_vin", $i);
 	    $data{cust_vin} = $q->param($cust_vin);
@@ -104,7 +112,10 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 		my $cust_vehicle = sprintf("cust_%d_vehicle", $i);	
 	    $data{cust_vehicle} = $q->param($cust_vehicle);
 
-		my $gap_product = $data{cust_gap_product};
+		my $product_months = $data{cust_product_months};
+		my $warranty_mileage = $data{cust_warranty_mileage};
+		my $warranty_deductible = $data{cust_warranty_deductible};
+		my $high_mileage = $data{cust_high_mileage};
 		my $vin = $data{cust_vin};
 		my $mileage = $data{cust_mileage};	
 		my $firstname = sprintf("%s",ucfirst(lc($data{cust_firstname})));
@@ -120,10 +131,14 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 		
 		my $formatted_price   = currency_format('usd',$price,FMT_SYMBOL);	
 		my $formatted_mileage = $mileage; 
-		$formatted_mileage =~ s/(?<=\d)(?=(?:\d\d\d)+\b)/,/g;	
+		$formatted_mileage =~ s/(?<=\d)(?=(?:\d\d\d)+\b)/,/g;
 
 		print   "<td align=\"center\">",$i+1,"</td>\n";
 		print   "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\">",uc($product),"</td>\n";
+		print   "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\">",uc($product_months),"</td>\n";
+		print   "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\">",uc($warranty_mileage),"</td>\n";
+		print   "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\">",uc($warranty_deductible),"</td>\n";
+		print   "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\">",uc($high_mileage),"</td>\n";
 		print   "<td align=\"center\">",$vin,"</td>\n";
 		print   "<td align=\"center\">",$formatted_mileage,"</td>\n";
 		print   "<td align=\"left\">",uc($firstname)," ",uc($lastname),"</td>\n";
@@ -132,7 +147,7 @@ for (my $i=0; $i < $data{num_accounts}; $i++)
 		print   "<td align=\"left\">",$vehicle,"</td>\n";
 		print   "</tr>\n";
 		
-		print CSV_OUTPUT_FILE $product,",",$gap_product,",",$vin,",",$mileage,",",$firstname,",",$lastname,",",$saledate,",",$address,",",$city,",",$state,",",$zip,",",$phone,",",$price,"\n";
+		print CSV_OUTPUT_FILE $product,",",$product_months,",",$warranty_mileage,",",$warranty_deductible,",",$vin,",",$mileage,",",$firstname,",",$lastname,",",$saledate,",",$address,",",$city,",",$state,",",$zip,",",$phone,",",$price,",",$high_mileage,"\n";
 		
 	}
 }

@@ -8,7 +8,6 @@ use Time::Piece;
 use IO::Handle;
 use Locale::Currency::Format;
 
-
  
 # Works with Firefox version 43
 # https://ftp.mozilla.org/pub/firefox/releases/43.0/win32/en-US/
@@ -20,16 +19,6 @@ use Locale::Currency::Format;
 
 if (open(AM_INPUT_FILE,$ARGV[0]) == 0) {
    print "Error opening input AutoManager report file: ",$ARGV[0],"\n";
-   exit -1;  
-}
-
-my $myTodayFormat = localtime->strftime('%Y_%m_%d');
-mkdir $myTodayFormat;
-
-my $avpHtmlFilename = sprintf("%s\\ProvidentAvpFile.html",$myTodayFormat);
-my $filename = sprintf(">%s",$avpHtmlFilename);
-if (open(HTML_OUTPUT_FILE,$filename) == 0) {
-   print "Error opening: %s",$filename,"\n";
    exit -1;  
 }
 
@@ -46,6 +35,44 @@ my $cellphone;
 my $vehicle;
 my $state;
 my $price;
+
+
+while (<AM_INPUT_FILE>) 
+{
+	chomp;
+	($vin,$mileage,$firstname,$lastname,$address,$city,$state,$zip,$saledate,$homephone,$cellphone,$price,$vehicle) = split(",");
+	
+	if (length($vin) ne 17)
+	{
+		last;
+	}
+	
+	if (!length($mileage) || !length($firstname) || !length($lastname) || !length($address) || !length($city) || !length($state) || !length($zip) || !length($saledate) || !length($price) || !length($vehicle))
+	{
+		print "Error found in entry: VIN: ",$vin, " Firstname: ",$firstname, " Lastname: ",$lastname,"\n";
+		exit;
+	}
+}
+
+close (AM_INPUT_FILE);
+
+
+
+if (open(AM_INPUT_FILE,$ARGV[0]) == 0) {
+   print "Error opening input AutoManager report file: ",$ARGV[0],"\n";
+   exit -1;  
+}
+
+my $myTodayFormat = localtime->strftime('%Y_%m_%d');
+mkdir $myTodayFormat;
+
+my $avpHtmlFilename = sprintf("%s\\ProvidentAvpFile.html",$myTodayFormat);
+my $filename = sprintf(">%s",$avpHtmlFilename);
+if (open(HTML_OUTPUT_FILE,$filename) == 0) {
+   print "Error opening: %s",$filename,"\n";
+   exit -1;  
+}
+
 
 print HTML_OUTPUT_FILE  "<html>\n";
 print HTML_OUTPUT_FILE  "<body>\n";
@@ -70,13 +97,12 @@ print HTML_OUTPUT_FILE "TH{font-family: Arial; font-size: 10pt;}\n";
 print HTML_OUTPUT_FILE "--->\n";
 print HTML_OUTPUT_FILE "</style>\n";
 
-print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\"><input type=\"radio\" name=\"cust_product\" value=\"Warranty\" checked>Warranty</td>   "; 
+print HTML_OUTPUT_FILE  "<td width=\"3%\" align=\"center\" bgcolor=\"#F3F781\"><input type=\"radio\" name=\"cust_product\" value=\"Warranty\" checked>Warranty</td>   "; 
 print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\"><input type=\"radio\" name=\"cust_product\" value=\"GAP\">GAP</td><br>\n"; 
 print HTML_OUTPUT_FILE  "<br><br>";	
 
-
 print HTML_OUTPUT_FILE  "<table border=5 id=\"table01\" >\n";
-print HTML_OUTPUT_FILE  "<tr><th>Select</th><th>12 mo</th><th>24 mo</th><th>36 mo</th><th>48 mo</th><th>Sales Date</th><th>VIN</th><th>Mileage</th><th>Name</th><th>Sales Price</th><th>Vehicle</th></tr>\n";
+print HTML_OUTPUT_FILE  "<tr><th>Entry</th><th>Select</th><th>Warranty (months)</th><th>Warranty (mileage)</th><th>Warranty (deductible)</th><th>High Mileage</th><th>Sales Date</th><th>VIN</th><th>Odometer</th><th>Name</th><th>Sales Price</th><th>Vehicle</th></tr>\n";
 
 my $loopIteration = 0;
 
@@ -85,8 +111,7 @@ while (<AM_INPUT_FILE>)
 	chomp;
 	($vin,$mileage,$firstname,$lastname,$address,$city,$state,$zip,$saledate,$homephone,$cellphone,$price,$vehicle) = split(",");
 	
-	print $loopIteration, " ", $vin, "\n";
-	
+	print $loopIteration, " ", $vin, "\n";	
 	
 	if (length($vin) ne 17)
 	{
@@ -105,28 +130,41 @@ while (<AM_INPUT_FILE>)
 		$phone = $homephone;		
 	}
 	
+	if (!length($mileage) || !length($firstname) || !length($lastname) || !length($address) || !length($city) || !length($state) || !length($zip) || !length($saledate) || !length($price) || !length($vehicle))
+	{
+		print "Error found in entry: VIN: ",$vin, " Firstname: ",$firstname, " Lastname: ",$lastname,"\n";
+		exit;
+	}
+	
+	
 	my $formatted_price   = currency_format('usd',$price,FMT_SYMBOL);	
 	my $formatted_mileage = $mileage; 
 	$formatted_mileage =~ s/(?<=\d)(?=(?:\d\d\d)+\b)/,/g;	
 	
 	print HTML_OUTPUT_FILE  "<tr>\n";	
 	
-	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#F3F781\"><input type=\"checkbox\" name=\"cust_",$loopIteration,"_cb\" value=\"yes\" checked></td>\n"; 
-	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_gap_product\" value=\"12\"checked></td>\n";
-	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_gap_product\" value=\"24\"></td>\n";
-	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_gap_product\" value=\"36\"></td>\n";
-	print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#04B431\"><input type=\"radio\" name=\"cust_",$loopIteration,"_gap_product\" value=\"48\"></td>\n";
+	print HTML_OUTPUT_FILE  "<td width=\"1%\" align=\"center\">",$loopIteration+1,"</td>\n";
+		
+	print HTML_OUTPUT_FILE  "<td width=\"1%\" align=\"center\" bgcolor=\"#F3F781\"><input type=\"checkbox\" name=\"cust_",$loopIteration,"_cb\" value=\"yes\" checked></td>\n"; 
 	
-	print HTML_OUTPUT_FILE  "<td align=\"center\">",$saledate,"</td>\n";
+	print HTML_OUTPUT_FILE  "<td width=\"7%\" align=\"center\" bgcolor=\"#04B431\"><label for=\"months\"></label><select id=\"months\" name=\"cust_",$loopIteration,"_product_months\"><option value=\"3\">3</option><option value=\"12\">12</option><option value=\"18\">18</option><option value=\"24\">24</option><option value=\"36\">36</option><option value=\"48\">48</option><option value=\"60\">60</option></select></td>\n";
+	
+	print HTML_OUTPUT_FILE  "<td width=\"7%\" align=\"center\" bgcolor=\"#04B431\"><label for=\"mileage\"></label><select id=\"mileage\" name=\"cust_",$loopIteration,"_product_mileage\"><option value=\"12000\">12,000</option><option value=\"18000\">18,000</option><option value=\"24000\">24,000</option><option value=\"36000\">36,000</option><option value=\"48000\">48,000</option><option value=\"50000\">50,000</option><option value=\"60000\">60,000</option></select></td>\n";
+		
+	print HTML_OUTPUT_FILE  "<td width=\"7%\" align=\"center\" bgcolor=\"#04B431\"><label for=\"deductible\"></label><select id=\"deductible\" name=\"cust_",$loopIteration,"_product_deductible\"><option value=\"0\">\$0</option><option value=\"50\">\$50</option><option value=\"100\">\$100</option><option value=\"200\">\$200</option></select></td>\n";
+	
+	print HTML_OUTPUT_FILE  "<td width=\"7%\" align=\"center\" bgcolor=\"#04B431\"><label for=\"high_mileage\"></label><select id=\"high_mileage\" name=\"cust_",$loopIteration,"_high_mileage\"><option value=\"No\">No</option><option value=\"Yes\">Yes</option></select></td>\n";
+	
+	#print HTML_OUTPUT_FILE  "<td width=\"4%\" align=\"center\" bgcolor=\"#C89600\"><input type=\"checkbox\" name=\"cust_",$loopIteration,"_high_mileage\" value=\"yes\"></td>\n";
+		
+	print HTML_OUTPUT_FILE  "<td width=\"7%\" align=\"center\">",$saledate,"</td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"center\">",$vin,"</td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"left\">",$formatted_mileage,"</td>\n";	
 	print HTML_OUTPUT_FILE  "<td align=\"left\">",uc($firstname)," ",uc($lastname),"</td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"center\">",$formatted_price,"</td>\n";
 	print HTML_OUTPUT_FILE  "<td align=\"left\">",$vehicle,"</td>\n";
 	print HTML_OUTPUT_FILE  "</tr>\n";
-	
-	
-	
+		
 	print HTML_OUTPUT_FILE  "<input type=\"hidden\" name=\"cust_",$loopIteration,"_vin\" value=\"",$vin,"\">\n";
 	print HTML_OUTPUT_FILE  "<input type=\"hidden\" name=\"cust_",$loopIteration,"_mileage\" value=\"",$mileage,"\">\n";
 	print HTML_OUTPUT_FILE  "<input type=\"hidden\" name=\"cust_",$loopIteration,"_firstname\" value=\"",$firstname,"\">\n";
