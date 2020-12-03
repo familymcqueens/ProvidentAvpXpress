@@ -36,6 +36,17 @@ my $vehicle;
 my $state;
 my $price;
 
+my $myTodayFormat = localtime->strftime('%Y_%m_%d');
+mkdir $myTodayFormat;
+
+my $avpHtmlFilename = sprintf("%s\\ProvidentAvpFile.html",$myTodayFormat);
+my $filename = sprintf(">%s",$avpHtmlFilename);
+if (open(HTML_OUTPUT_FILE,$filename) == 0) {
+   print "Error opening: %s",$filename,"\n";
+   exit -1;  
+}
+
+
 
 while (<AM_INPUT_FILE>) 
 {
@@ -49,7 +60,8 @@ while (<AM_INPUT_FILE>)
 	
 	if (!length($mileage) || !length($firstname) || !length($lastname) || !length($address) || !length($city) || !length($state) || !length($zip) || !length($saledate) || !length($price) || !length($vehicle))
 	{
-		print "Error found in entry: VIN: ",$vin, " Firstname: ",$firstname, " Lastname: ",$lastname,"\n";
+		print "Error found in entry: VIN: ",$vin, " Firstname: ",$firstname, " Lastname: ",$lastname, " Mileage: ",$mileage, " Price: ",$price, " Zip: ",$zip,"\n";
+		print HTML_OUTPUT_FILE "Error found in entry: VIN: ",$vin, " Firstname: ",$firstname, " Lastname: ",$lastname, " Mileage: ",$mileage, " Price: ",$price, " Zip: ",$zip,"\n";
 		exit;
 	}
 }
@@ -60,16 +72,6 @@ close (AM_INPUT_FILE);
 
 if (open(AM_INPUT_FILE,$ARGV[0]) == 0) {
    print "Error opening input AutoManager report file: ",$ARGV[0],"\n";
-   exit -1;  
-}
-
-my $myTodayFormat = localtime->strftime('%Y_%m_%d');
-mkdir $myTodayFormat;
-
-my $avpHtmlFilename = sprintf("%s\\ProvidentAvpFile.html",$myTodayFormat);
-my $filename = sprintf(">%s",$avpHtmlFilename);
-if (open(HTML_OUTPUT_FILE,$filename) == 0) {
-   print "Error opening: %s",$filename,"\n";
    exit -1;  
 }
 
