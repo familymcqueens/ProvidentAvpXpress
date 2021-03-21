@@ -63,9 +63,9 @@ if (open(HTML_OUTPUT_FILE,$filename) == 0) {
 }
 
 print HTML_OUTPUT_FILE  "<html>\n";
-print HTML_OUTPUT_FILE  "<head><title>Pro Fin AVP eXpress</title></head>\n";
+print HTML_OUTPUT_FILE  "<head><title>Pro Fin AvpXpress</title></head>\n";
 print HTML_OUTPUT_FILE  "<body>\n";
-print HTML_OUTPUT_FILE "<div style=\"display:block;text-align:left\"><a href=\"https://login.assuredvehicleprotection.com/Login.aspx\" imageanchor=1><img align=\"left\" src=\"avp.jpg\" border=0></a><h1><I>Provident Financial AVP eXpress</I></h1>";
+print HTML_OUTPUT_FILE "<div style=\"display:block;text-align:left\"><a href=\"https://login.assuredvehicleprotection.com/Login.aspx\" imageanchor=1><img align=\"left\" src=\"avp.jpg\" border=0></a><h1><I>Provident Financial AvpXpress</I></h1>";
 print HTML_OUTPUT_FILE "<head><style>\n";
 print HTML_OUTPUT_FILE "table  { width:80%;}\n";
 print HTML_OUTPUT_FILE "th, td { padding: 10px;}\n";

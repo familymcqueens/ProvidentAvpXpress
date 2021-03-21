@@ -82,7 +82,7 @@ print HTML_OUTPUT_FILE  "<title>AVP eXpress</title>\n";
 print HTML_OUTPUT_FILE  "<div style=\"display:block;text-align:left\">\n";
 print HTML_OUTPUT_FILE  "<a href=\"http://new.assuredvehicleprotection.com/Login.aspx\" imageanchor=1>\n";
 print HTML_OUTPUT_FILE  "<img align=\"left\" src=\"ProvidentAvp.png\" border=0></a><h1><I>AVP eXpress</I></h1><br>\n";
-print HTML_OUTPUT_FILE  "<form method=\"GET\" action=\"http://localhost/ProvidentAvpExpress/ProvidentAvp2.pl\">\n";
+print HTML_OUTPUT_FILE  "<form method=\"GET\" action=\"http://localhost/ProvidentAvpXpress/ProvidentAvp2.pl\">\n";
 
 print HTML_OUTPUT_FILE  "<head><style>\n";
 print HTML_OUTPUT_FILE  "table { width:100%;}\n";

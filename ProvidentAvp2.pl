@@ -19,7 +19,7 @@ my $myTodayFormat = localtime->strftime('%Y_%m_%d');
 # ***************************************************************************
 # *** CHANGE THIS IF LOCATION OF PROVIDENT AVP EXPRESS DIRECTORY CHANGES  ***
 # ***************************************************************************
-my $csv_output_filename = sprintf("c:\\jmcqueen\\Provident\\Wwebserver\\ProvidentAvpExpress\\%s\\ProvidentAvp_output.csv",$myTodayFormat);
+my $csv_output_filename = sprintf("c:\\jmcqueen\\Provident\\Wwebserver\\ProvidentAvpXpress\\%s\\ProvidentAvp_output.csv",$myTodayFormat);
 
 print   "<html>\n";
 print   "<title>AVP eXpress</title>\n";
@@ -43,7 +43,7 @@ print  "</style>\n";
 print   "<table border=5 id=\"table01\" >\n";
 print   "<tr><th>Index</th><th>Product</th><th>Months</th><th>Mileage</th><th>Deductible</th><th>High Mileage</th><th>VIN</th><th>Odometer</th><th>Customer Name</th><th>Sales Date</th><th>Price</th><th>Vehicle</th></tr>\n";
 
-print   "<form method=\"GET\" action=\"http://localhost/ProvidentAvpExpress/ProvidentAvp3.pl\">\n";
+print   "<form method=\"GET\" action=\"http://localhost/ProvidentAvpXpress/ProvidentAvp3.pl\">\n";
 
 my $filename = sprintf(">%s",$csv_output_filename);
 if (open(CSV_OUTPUT_FILE,$filename) == 0) {
