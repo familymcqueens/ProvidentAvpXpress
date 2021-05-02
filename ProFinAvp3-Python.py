@@ -17,11 +17,13 @@ def CheckForSubmitErrors(prod_type,firstname,lastname,saledate):
         msg = "%s Duplicate entry: Replace with %s [%s %s] ?" % (prod_type,saledate,firstname,lastname)
         print(msg)
         MsgBox = tk.messagebox.askyesno('Duplicate Entry Detected',msg, icon='warning')
-        if (MsgBox == "yes"):
+        print("Message Box Answer = [",MsgBox,"]")
+        if (MsgBox == True):
+            print("Clicking on Continue with New App")
             driver.find_element_by_link_text('Continue With New App').click()
             return "OK"
-
-        return "DUPLICATE ENTRY"
+        else:
+            return "DUPLICATE ENTRY"
 
     if ("There are no rates available for this vehicle." in driver.page_source):
         msg = "%s Manual entry required: %s [%s %s]" % (prod_type, saledate, firstname, lastname)
@@ -132,27 +134,32 @@ def EnterProductInfo(vin,prod_type,saledate,firstname,lastname,address,city,stat
     state = LookUpStateFromAbbreviation(state)
     driver.find_element_by_id('txtFirstName').send_keys(firstname)
     driver.find_element_by_id('txtLastName').send_keys(lastname)
-    driver.find_element_by_id('txtClientAddress').send_keys(address)
-    driver.find_element_by_id('txtCity').send_keys(city)
-    Select(driver.find_element_by_id('ddlState')).select_by_visible_text(state)
-    driver.find_element_by_id('txtZip').send_keys(Keys.ARROW_RIGHT)
-    driver.implicitly_wait(3);
-    driver.find_element_by_id('txtZip').send_keys(zip[0])
-    driver.find_element_by_id('txtZip').send_keys(zip[1])
-    driver.find_element_by_id('txtZip').send_keys(zip[2])
-    driver.find_element_by_id('txtZip').send_keys(zip[3])
-    driver.find_element_by_id('txtZip').send_keys(zip[4])
-    driver.find_element_by_id('txtPhone').send_keys(Keys.ARROW_RIGHT)
-    driver.implicitly_wait(3);
-    driver.find_element_by_id('txtPhone').send_keys(phone)
-    driver.find_element_by_id('txtVehicleCost2').send_keys(saleprice)
     driver.find_element_by_id('txtPurchaseDate').click()
     driver.find_element_by_id('txtPurchaseDate').send_keys(saledate)
     driver.find_element_by_id('txtPurchaseDate').send_keys(Keys.TAB)
-
+    driver.find_element_by_id('txtClientAddress').send_keys(address)
+    driver.find_element_by_id('txtCity').send_keys(city)
+    Select(driver.find_element_by_id('ddlState')).select_by_visible_text(state)
+    #Zip code has difficulties / enter 3x times
+    driver.find_element_by_id('txtZip').send_keys(Keys.TAB)
+    driver.implicitly_wait(3);
+    driver.find_element_by_id('txtZip').send_keys(zip)
+    driver.implicitly_wait(10);
+    driver.find_element_by_id('txtZip').send_keys(zip)
+    driver.implicitly_wait(10);
+    driver.find_element_by_id('txtZip').send_keys(zip)
+    driver.implicitly_wait(3);
+    driver.find_element_by_id('txtPhone').send_keys(phone)
+    driver.find_element_by_id('txtVehicleCost2').send_keys(saleprice)
+    
     # DEBUG - comment this out to not submit
     driver.find_element_by_id('btnLookupSender').click()
     print("%s product: [%s %s] submitted!" % (prod_type,firstname,lastname))
+    
+    #if ("VALIDATION ERROR" in driver.page_source):
+    #    msg = "%s Detected Validation Error?" % (prod_type,saledate,firstname,lastname)
+    #    print(msg)
+    #    MsgBox = tk.messagebox.askyesno('Validation Error Detected',msg, icon='warning')
 
     HTML_OUTPUT_FILE.write("<td align=\"center\">OK</td>\n")
     HTML_OUTPUT_FILE.write("</tr>\n")
