@@ -44,6 +44,8 @@ def LookUpStateFromAbbreviation(abbev):
         return "California"
     elif (abbev == "CO"):
         return "Colorado"
+    elif (abbev == "CT"):
+        return "Connecticut"
     elif (abbev == "DE"):
         return "Delaware"
     elif (abbev == "FL"):
@@ -141,6 +143,7 @@ def EnterProductInfo(vin,prod_type,saledate,firstname,lastname,address,city,stat
     driver.find_element_by_id('txtCity').send_keys(city)
     Select(driver.find_element_by_id('ddlState')).select_by_visible_text(state)
     #Zip code has difficulties / enter 3x times
+    driver.implicitly_wait(5)
     driver.find_element_by_id('txtZip').send_keys(Keys.TAB)
     driver.implicitly_wait(3);
     driver.find_element_by_id('txtZip').send_keys(zip)
@@ -157,7 +160,7 @@ def EnterProductInfo(vin,prod_type,saledate,firstname,lastname,address,city,stat
     print("%s product: [%s %s] submitted!" % (prod_type,firstname,lastname))
     
     #if ("VALIDATION ERROR" in driver.page_source):
-    #    msg = "%s Detected Validation Error?" % (prod_type,saledate,firstname,lastname)
+    #    msg = "Detected Validation Error"
     #    print(msg)
     #    MsgBox = tk.messagebox.askyesno('Validation Error Detected',msg, icon='warning')
 
@@ -197,12 +200,13 @@ def EnterBasicGap(vin,odometer,prod_months,firstname,lastname,saledate):
     driver.find_element_by_id('ContentPlaceHolder1_txtVIN').send_keys(vin)
     driver.find_element_by_id('ContentPlaceHolder1_txtMileage').send_keys(odometer)
     Select(driver.find_element_by_id('ContentPlaceHolder1_ddlNewUsed')).select_by_visible_text('Used')
-    driver.find_element_by_id('ContentPlaceHolder1_btnSubmit').click()
     driver.implicitly_wait(3)
+    driver.find_element_by_id('ContentPlaceHolder1_btnSubmit').click()
+    
 
     # Check for submit errors
     answer = CheckForSubmitErrors("GAP",firstname,lastname,saledate)
-    print("GAP:CheckForSubmitErrors:ANSWER -> [%s]" % (answer))
+    print("GAP:EnterBasicGap:CheckForSubmitErrors:ANSWER -> [%s]" % (answer))
 
     if (answer != "OK"):
         HTML_OUTPUT_FILE.write("<td align=\"center\"><font color=red>%s</font></td>\n" % (answer))
@@ -213,6 +217,9 @@ def EnterBasicGap(vin,odometer,prod_months,firstname,lastname,saledate):
         driver.implicitly_wait(3);
         return "ERROR"
 
+    driver.implicitly_wait(3)
+    print("GAP:EnterBasicGap: Product Months -> [%s]" % (prod_months))
+
     if (prod_months == "12"):
         driver.find_element_by_xpath('//td/input').click()
     elif( prod_months == "24" ):
@@ -221,6 +228,11 @@ def EnterBasicGap(vin,odometer,prod_months,firstname,lastname,saledate):
         driver.find_element_by_xpath('//tr[4]/td/input').click()
     elif (prod_months == "48"):
         driver.find_element_by_xpath('//tr[5]/td/input').click()
+    else:
+        msg = "GAP:EnterBasicGap: Product Months Invalid -> [%s months] " % (prod_months)
+        print(msg)
+        tk.messagebox.showinfo('Error',msg)
+        
     driver.find_element_by_id('lnkNext').click()
     driver.implicitly_wait(3)
     return "OK"
@@ -417,28 +429,28 @@ def main(inputFilename):
                 HTML_OUTPUT_FILE.write("<td align=\"center\">%s</td>\n" % (odometer));
                 HTML_OUTPUT_FILE.write("<td align=\"center\">%s %s</td>\n" % (firstname,lastname));
 
+                driver.implicitly_wait(5)
+                    
                 # Pro Fin Lending Solutions Warranty 3/3
                 if (prod_months == "3") :
                     print("WARRANTY 3/3")
-                    time.sleep(1)
                     result = EnterBasicWarranty(vin,odometer,firstname,lastname,saledate)
 
                 # Pro Fin Lending Solutions AVP3
                 elif(high_mileage == "NO") :
                     print("WARRANTY - AVP3")
-                    time.sleep(1)
                     result = EnterAVP3Warranty(vin,odometer,prod_months,prod_miles,prod_deductible,firstname,lastname,saledate);
 
                 # Pro Fin Lending Solutions SPL - HIGH MILEAGE
                 elif(high_mileage == "YES") :
                     print("WARRANTY - HIGH MILEAGE")
-                    time.sleep(1)
                     result = EnterHighMileageWarranty(vin,odometer,prod_months,firstname,lastname,saledate)
 
                 if (result == "OK"):
                     EnterProductInfo(vin,prod_type,saledate,firstname,lastname,address,city,state,zip,phone,price)
-            #End of Warranty
-
+            ##
+            ## End of Warranty
+            ##
 
             ##
             ## GAP
@@ -454,31 +466,35 @@ def main(inputFilename):
                 HTML_OUTPUT_FILE.write("<td align=\"center\">%s</td>\n" % (vin))
                 HTML_OUTPUT_FILE.write("<td align=\"center\">%s</td>\n" % (odometer))
                 HTML_OUTPUT_FILE.write("<td align=\"center\">%s %s</td>\n" % (firstname,lastname))
+                
+                driver.implicitly_wait(5)
 
                 # Pro Fin Lending Solutions GAP
-                time.sleep(1)
                 result = EnterBasicGap(vin,odometer,prod_months,firstname,lastname,saledate)
 
+                driver.implicitly_wait(5)
+                
                 if (result == "OK"):
                     EnterProductInfo(vin, prod_type, saledate, firstname, lastname, address, city, state, zip, phone, price)
             # End of GAP
 
             # Setup for the next row entry...
             if (result == "OK"):
+                driver.implicitly_wait(5)
                 driver.find_element_by_link_text('Contracts').click()
-                driver.implicitly_wait(3);
+                driver.implicitly_wait(3)
                 driver.find_element_by_xpath('//li/span').click()
-                driver.implicitly_wait(3);
-
+                
+    driver.implicitly_wait(5)
     print("Entries complete, show Pending Contracts...\n");
     driver.find_element_by_link_text('Home').click()
-    driver.implicitly_wait(3);
+    driver.implicitly_wait(3)
     driver.find_element_by_xpath('//form[@id=\'form1\']/div[6]/a/div/div[2]').click()
-    driver.implicitly_wait(3);
+    driver.implicitly_wait(3)
     driver.find_element_by_link_text('+ Pending Contracts').click()
-    driver.implicitly_wait(3);
+    driver.implicitly_wait(3)
     driver.find_element_by_id('btnGetDate').click();
-    driver.implicitly_wait(3);
+    driver.implicitly_wait(3)
 
     HTML_OUTPUT_FILE.write("<br><br><br>\n")
     HTML_OUTPUT_FILE.write("</table>\n")
