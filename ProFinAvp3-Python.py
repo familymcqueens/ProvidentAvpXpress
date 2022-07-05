@@ -500,18 +500,8 @@ def main(inputFilename):
     HTML_OUTPUT_FILE.write("</table>\n")
     HTML_OUTPUT_FILE.write("</form>\n")
     HTML_OUTPUT_FILE.write("</body>\n")
-    HTML_OUTPUT_FILE.write("</html>\n")
-
-    print("Closing up program...")
-    HTML_OUTPUT_FILE.close()
-
-    # Kick off chrome browser with results
-    command = "start chrome %s" % (htmlOutputFilename)
-    os.system(command);
-    time.sleep(30)
-    driver.quit()
-    exit()
-
+    HTML_OUTPUT_FILE.write("</html>\n")   
+    
 
 
 ##
@@ -519,13 +509,28 @@ def main(inputFilename):
 ##
 today = date.today()
 htmlOutputFilename = "%s\ProvidentAvpFinal.html" % (today.strftime("%Y_%m_%d"))
-
 HTML_OUTPUT_FILE = open(htmlOutputFilename, "w")
+
 driver = webdriver.Chrome()
 main(sys.argv[1]) # ProvidentAvp_output.csv
 
-time.sleep(60)  # Let the user actually see something!
+print("Closing up output file...")
+HTML_OUTPUT_FILE.close()
+
+# Kick off chrome browser with results
+print("Kicking off browser with output file")
+pwd = os. getcwd();
+htmlOutputFilename = "%s\%s" % (pwd,htmlOutputFilename)
+command = "start chrome %s" % (htmlOutputFilename)
+os.system(command);
+
+time.sleep(15)  # Let the user actually see something!
 driver.quit()
+
+exit()
+##
+##  Program End
+##
 
 
 

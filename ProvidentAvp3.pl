@@ -94,8 +94,8 @@ while ( $sel->is_element_present("id=txtUserName") eq 0 )
 }
 
 # New cookie consent button added to site - 4/2/20
-$sel->click_ok("id=btnCookieConsent", $myLogin);
-sleep(1);
+#$sel->click_ok("id=btnCookieConsent", $myLogin);
+#sleep(1);
 
 
 $sel->type_ok("id=txtUserName", $myLogin);
@@ -344,7 +344,7 @@ print HTML_OUTPUT_FILE "<br><br>\n";
 close(AM_INPUT_FILE); 
 close(HTML_OUTPUT_FILE);
 
-my $command = sprintf("start chrome %s",$avpHtmlFilename);
+my $command = sprintf("start chrome C:\\jmcqueen\\ProFin\\WWebserver\\ProvidentAvpXpress\\%s",$avpHtmlFilename);
 my $status = system($command);
 sleep(30000);
 
