@@ -144,14 +144,17 @@ def EnterProductInfo(vin,prod_type,saledate,firstname,lastname,address,city,stat
     Select(driver.find_element_by_id('ddlState')).select_by_visible_text(state)
     #Zip code has difficulties / enter 3x times
     driver.implicitly_wait(5)
-    driver.find_element_by_id('txtZip').send_keys(Keys.TAB)
-    driver.implicitly_wait(3);
+    #driver.find_element_by_id('txtZip').send_keys(Keys.TAB)
+    driver.find_element_by_id('txtZip').clear()
+    driver.find_element_by_id('txtZip').click()
     driver.find_element_by_id('txtZip').send_keys(zip)
-    driver.implicitly_wait(10);
-    driver.find_element_by_id('txtZip').send_keys(zip)
-    driver.implicitly_wait(10);
-    driver.find_element_by_id('txtZip').send_keys(zip)
-    driver.implicitly_wait(3);
+    
+    #driver.implicitly_wait(10);
+    #driver.find_element_by_id('txtZip').send_keys(zip)
+    #driver.implicitly_wait(10);
+    #driver.find_element_by_id('txtZip').send_keys(zip)
+    #driver.implicitly_wait(3);
+    
     driver.find_element_by_id('txtPhone').send_keys(phone)
     driver.find_element_by_id('txtVehicleCost2').send_keys(saleprice)
     
@@ -370,16 +373,21 @@ def main(inputFilename):
     HTML_OUTPUT_FILE.write("<table border=5 id=\"table01\" >\n");
     HTML_OUTPUT_FILE.write("<tr><th>Index</th><th>Product</th><th>Months<th>Mileage</th><th>Deductible</th><th>Sale Date</th><th>VIN</th><th>Odometer</th><th>Name</th><th>Result</th></tr>\n");
 
-    #driver = webdriver.Chrome();
     driver.get('https://login.assuredvehicleprotection.com/Login.aspx');
     driver.implicitly_wait(3);
     driver.find_element_by_name('btnCookieConsent').click();
     driver.find_element_by_name('txtUserName').send_keys('jmcqueenJTR');
     driver.find_element_by_name('txtPassword').send_keys('jmcqueenJTR');
     driver.find_element_by_name('btnLogin').click();
-    driver.implicitly_wait(3);
+    
+    msg = "Script will start 3 seconds after hitting OK..."
+    print(msg)
+    tk.messagebox.showinfo('Tick-Tock',msg)
+    
+    time.sleep(3);
     driver.switch_to.frame(0);
     driver.find_element_by_id('newContract').click();
+    
     loop_iteration = 0;
 
     with open(sys.argv[1], newline='') as csvfile:
